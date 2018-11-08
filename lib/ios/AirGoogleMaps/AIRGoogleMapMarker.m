@@ -252,69 +252,29 @@ CGRect unionRect(CGRect a, CGRect b) {
 - (void)setImageSrc:(NSString *)imageSrc
 {
   _imageSrc = imageSrc;
-
-  if (_reloadImageCancellationBlock) {
-    _reloadImageCancellationBlock();
-    _reloadImageCancellationBlock = nil;
-  }
-
+  if (_iconImageView) [_iconImageView removeFromSuperview];
+  
   if (!_imageSrc) {
-    if (_iconImageView) [_iconImageView removeFromSuperview];
-    return;
+      return;
   }
 
-  if (!_iconImageView) {
-    // prevent glitch with marker (cf. https://github.com/react-native-community/react-native-maps/issues/738)
-    UIImageView *empyImageView = [[UIImageView alloc] init];
-    _iconImageView = empyImageView;
-    [self iconViewInsertSubview:_iconImageView atIndex:0];
+  UIImage *image = [UIImage imageNamed:_imageSrc];
+
+  UIImageView *imageView;
+  if (_iconImageView) {
+      imageView = _iconImageView;
+      [imageView setImage:image];
+  } else {
+      imageView = [[UIImageView alloc] initWithImage:image];
   }
 
-  _reloadImageCancellationBlock = [_bridge.imageLoader loadImageWithURLRequest:[RCTConvert NSURLRequest:_imageSrc]
-                                                                          size:self.bounds.size
-                                                                         scale:RCTScreenScale()
-                                                                       clipped:YES
-                                                                    resizeMode:RCTResizeModeCenter
-                                                                 progressBlock:nil
-                                                              partialLoadBlock:nil
-                                                               completionBlock:^(NSError *error, UIImage *image) {
-                                                                 if (error) {
-                                                                   // TODO(lmr): do something with the error?
-                                                                   NSLog(@"%@", error);
-                                                                 }
-                                                                 dispatch_async(dispatch_get_main_queue(), ^{
+  CGRect bounds = CGRectMake(0, 0, image.size.width, image.size.height);
+  [self setFrame:bounds];
 
-                                                                   // TODO(gil): This way allows different image sizes
-                                                                   if (self->_iconImageView) [self->_iconImageView removeFromSuperview];
+  [self iconViewInsertSubview:imageView atIndex:0];
 
-                                                                   // ... but this way is more efficient?
-//                                                                   if (_iconImageView) {
-//                                                                     [_iconImageView setImage:image];
-//                                                                     return;
-//                                                                   }
-
-                                                                   UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-
-                                                                   // TODO: w,h or pixel density could be a prop.
-                                                                   float density = 1;
-                                                                   float w = image.size.width/density;
-                                                                   float h = image.size.height/density;
-                                                                   CGRect bounds = CGRectMake(0, 0, w, h);
-
-                                                                   imageView.contentMode = UIViewContentModeScaleAspectFit;
-                                                                   [imageView setFrame:bounds];
-
-                                                                   // NOTE: sizeToFit doesn't work instead. Not sure why.
-                                                                   // TODO: Doing it this way is not ideal because it causes things to reshuffle
-                                                                   //       when the image loads IF the image is larger than the UIView.
-                                                                   //       Shouldn't required images have size info automatically via RN?
-                                                                   CGRect selfBounds = unionRect(bounds, self.bounds);
-                                                                   [self setFrame:selfBounds];
-
-                                                                   self->_iconImageView = imageView;
-                                                                   [self iconViewInsertSubview:imageView atIndex:0];
-                                                                 });
-                                                               }];
+  self->_iconImageView = imageView;
+  [self redraw];
 }
 
 - (void)setIconSrc:(NSString *)iconSrc
