@@ -288,7 +288,6 @@ declare module "react-native-maps" {
     reuseIdentifier?: string;
     title?: string;
     description?: string;
-    image?: string;
     icon?: string;
     opacity?: number;
     pinColor?: string;
