@@ -49,7 +49,7 @@ RCT_EXPORT_MODULE()
   map.bridge = self.bridge;
   map.delegate = self;
   map.isAccessibilityElement = NO;
-  map.accessibilityElementsHidden = NO;
+  map.accessibilityElementsHidden = YES;
   map.settings.consumesGesturesInView = NO;
   map.indoorDisplay.delegate = self;
   self.map = map;
