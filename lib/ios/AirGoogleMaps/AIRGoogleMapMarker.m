@@ -320,7 +320,7 @@ CGRect unionRect(CGRect a, CGRect b) {
 - (void)setIconSrc:(NSString *)iconSrc
 {
   _iconSrc = iconSrc;
-  _realMarker.icon = [[UIImage imageNamed:iconSrc]];
+  _realMarker.icon = [UIImage imageNamed:iconSrc];
 }
 
 - (void)setTitle:(NSString *)title {
