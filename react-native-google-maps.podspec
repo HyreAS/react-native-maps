@@ -17,6 +17,5 @@ Pod::Spec.new do |s|
   s.compiler_flags = '-DHAVE_GOOGLE_MAPS=1', '-DHAVE_GOOGLE_MAPS_UTILS=1'
 
   s.dependency 'React'
-  s.dependency 'GoogleMaps', '4.0.0'
   s.dependency 'Google-Maps-iOS-Utils', '3.4.1'
 end
