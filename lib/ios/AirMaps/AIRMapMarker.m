@@ -298,7 +298,7 @@ NSInteger const AIR_CALLOUT_OPEN_ZINDEX_BASELINE = 999;
 
 - (BOOL)shouldUsePinView
 {
-    return self.reactSubviews.count == 0 && !self.imageSrc;
+    return self.reactSubviews.count == 0 && !self.imageSrc && !self.iconSrc;
 }
 
 - (void)setOpacity:(double)opacity
@@ -330,6 +330,12 @@ NSInteger const AIR_CALLOUT_OPEN_ZINDEX_BASELINE = 999;
                                                                          self.image = image;
                                                                      });
                                                                  }];
+}
+
+- (void)setIconSrc:(NSString *)iconSrc
+{
+    _iconSrc = iconSrc;
+    self.image = [UIImage imageNamed:iconSrc];
 }
 
 - (void)setPinColor:(UIColor *)pinColor
